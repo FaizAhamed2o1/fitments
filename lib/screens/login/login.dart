@@ -15,6 +15,21 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final formKey = GlobalKey<FormState>();
+  var _isLoading = false;
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   Future.delayed(
+  //     Duration(seconds: 5),
+  //     () {
+  //       setState(() {
+  //         _showWidget = true;
+  //       });
+  //     },
+  //   );
+  // }
+
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -61,29 +76,47 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: 15,
                     ),
                     TextFormField(
+                      validator: (value) {
+                        if (value!.isEmpty ||
+                            !RegExp(
+                              r'^[a-z A-Z 0-9]+$',
+                            ).hasMatch(value)) {
+                          return 'Enter the correct name.';
+                        } else {
+                          return null;
+                        }
+                      },
                       cursorColor: Colors.black,
                       style: TextStyle(fontSize: 16),
                       decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            width: 1,
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            width: 2,
-                            color: Colors.redAccent,
+                          errorBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              width: 2,
+                              color: Colors.redAccent,
+                            ),
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            width: 2,
-                            color: AppColors.greenButtonColor,
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              width: 2,
+                              color: AppColors.greenButtonColor,
+                            ),
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              width: 2,
+                              color: Colors.redAccent,
+                              style: BorderStyle.solid,
+                            ),
+                            borderRadius: BorderRadius.circular(20),
+                          )),
                     ),
                     SizedBox(
                       height: 25,
@@ -101,6 +134,16 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: 15,
                     ),
                     TextFormField(
+                      validator: (value) {
+                        if (value!.isEmpty ||
+                            !RegExp(
+                              r'^[a-z A-Z 0-9]+$',
+                            ).hasMatch(value)) {
+                          return 'Enter the correct password.';
+                        } else {
+                          return null;
+                        }
+                      },
                       cursorColor: Colors.black,
                       style: TextStyle(fontSize: 16),
                       decoration: InputDecoration(
@@ -114,12 +157,22 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderSide: BorderSide(
                             width: 2,
                             color: Colors.redAccent,
+                            style: BorderStyle.solid,
                           ),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
                             width: 2,
                             color: AppColors.greenButtonColor,
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            width: 2,
+                            color: Colors.redAccent,
+                            style: BorderStyle.solid,
                           ),
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -131,32 +184,58 @@ class _LoginScreenState extends State<LoginScreen> {
                     Align(
                       alignment: Alignment.topCenter,
                       child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: Size(220, 45),
-                          backgroundColor: AppColors.greenButtonColor,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: ((context) => HomeScreen()),
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: Size(220, 45),
+                            backgroundColor: AppColors.greenButtonColor,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
                             ),
-                          );
-                        },
-                        child: Text(
-                          'LOGIN',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black,
                           ),
-                        ),
-                      ),
+                          onPressed: () async {
+                            if (formKey.currentState!.validate()) {
+                              // _isLoading ? null : startLoading;
+                              setState(() {
+                                _isLoading = true;
+                              });
+                              await Future.delayed(Duration(seconds: 2));
+                              setState(() {
+                                _isLoading = false;
+                              });
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: ((context) => HomeScreen()),
+                                ),
+                              );
+                            }
+                          },
+                          child: _isLoading
+                              ? Container(
+                                  height: 25,
+                                  width: 25,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Text(
+                                  'LOGIN',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black,
+                                  ),
+                                )),
                     ),
+                    // ElevatedButton(onPressed: () {
+                    //       Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //           builder: ((context) => HomeScreen()),
+                    //         ),
+                    //       );
+                    //     }, child: Text('Use me to go to homepage for now mofo'),),
                     SizedBox(
                       height: 70,
                     ),
